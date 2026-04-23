@@ -1,0 +1,149 @@
+package com.music.store.repository;
+
+import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+import com.music.store.dto.AlbumResponseDto;
+import com.music.store.entity.AlbumEntity;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
+
+@Repository
+@Transactional
+public class AlbumRepository {
+
+	@PersistenceContext
+	private EntityManager entityManager = null;
+
+	// INSERTA UN ALBUM NUEVO
+	public int save(AlbumEntity album) {
+		String sql = """
+				INSERT INTO albums
+				(artist_id, genre_id, format_id, album_name, year_release)
+				VALUES (?, ?, ?, ?, ?)
+				""";
+
+		return entityManager.createNativeQuery(sql).setParameter(1, album.getArtistId())
+				.setParameter(2, album.getGenreId()).setParameter(3, album.getFormatId())
+				.setParameter(4, album.getAlbumName()).setParameter(5, album.getYearRelease()).executeUpdate();
+	}
+
+	// DEVUELVE TODOS LOS ALBUMS
+	@SuppressWarnings("unchecked")
+	public List<AlbumEntity> findAll() {
+		String sql = "SELECT * FROM albums";
+
+		return entityManager.createNativeQuery(sql, AlbumEntity.class).getResultList();
+	}
+
+	// Devuelve un album especificado por el id
+	@SuppressWarnings("unchecked")
+	public AlbumEntity findById(Integer id) {
+		String sql = "SELECT * FROM albums WHERE id = ?";
+
+		List<AlbumEntity> result = entityManager.createNativeQuery(sql, AlbumEntity.class).setParameter(1, id)
+				.getResultList();
+
+		return result.isEmpty() ? null : result.get(0);
+	}
+
+	// Actualiza la informacion de un album
+	public int update(Integer id, AlbumEntity album) {
+
+		String sql = """
+				UPDATE albums
+				SET artist_id = ?,
+					genre = ?,
+					format_id = ?,
+					album_name = ?,
+					year_release = ?
+				WHERE id = ?
+				""";
+
+		return entityManager.createNativeQuery(sql).setParameter(1, album.getArtistId())
+				.setParameter(2, album.getGenreId()).setParameter(3, album.getFormatId())
+				.setParameter(4, album.getAlbumName()).setParameter(5, album.getYearRelease()).setParameter(6, id)
+				.executeUpdate();
+	}
+
+	// Elimina un album
+	public int delete(Integer id) {
+
+		String sql = "DELETE FROM albums WHERE id = ?";
+
+		int rowsAffected = entityManager.createNativeQuery(sql).setParameter(1, id).executeUpdate();
+
+		return rowsAffected;
+	}
+
+	// Buscar albums de un artista en especifico
+	@SuppressWarnings("unchecked")
+	public List<AlbumEntity> findByArtist(Integer artistId) {
+		String sql = "SELECT * FROM albums a WHERE a.artist_id = ?";
+
+		return entityManager.createNativeQuery(sql, AlbumEntity.class).setParameter(1, artistId).getResultList();
+	}
+
+	// Buscar albums por genero
+	@SuppressWarnings("unchecked")
+	public List<AlbumEntity> findByGenre(Integer genreId) {
+
+		String sql = "SELECT * FROM albums a WHERE a.genre_id = ?";
+
+		return entityManager.createNativeQuery(sql, AlbumEntity.class).setParameter(1, genreId).getResultList();
+	}
+
+	// Buscar por formato
+	@SuppressWarnings("unchecked")
+	public List<AlbumEntity> findByFormat(Integer formatId) {
+
+		String sql = "SELECT * FROM albums a WHERE a.format_id = ?";
+
+		return entityManager.createNativeQuery(sql, AlbumEntity.class).setParameter(1, formatId).getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<AlbumEntity> findByYear(Integer year) {
+
+		String sql = "SELECT * FROM albums a WHERE a.year_release = ?";
+
+		return entityManager.createNativeQuery(sql, AlbumEntity.class).setParameter(1, year).getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<AlbumResponseDto> globalSearch(String searchText) {
+		String sql = """
+				SELECT
+				        a.id,
+				        a.album_name,
+				        ar.artist_name,
+				        g.genres_name,
+				        f.format_type,
+				        a.year_release,
+				        a.image_url
+				    FROM albums a
+				    JOIN artists ar ON a.artist_id = ar.id
+				    JOIN genres g ON a.genre_id = g.id
+				    JOIN formats f ON a.format_id = f.id
+				    WHERE
+				        LOWER(a.album_name) LIKE LOWER(?)
+				    OR LOWER(ar.artist_name) LIKE LOWER(?)
+				    OR LOWER(g.genres_name) LIKE LOWER(?)
+				    OR LOWER(f.format_type) LIKE LOWER(?)
+				    OR CAST(a.year_release AS CHAR) LIKE ?
+				    LIMIT 20
+				""";
+
+		String pattern = "%" + searchText + "%";
+
+		List<Object[]> results = entityManager.createNativeQuery(sql).setParameter(1, pattern).setParameter(2, pattern)
+				.setParameter(3, pattern).setParameter(4, pattern).setParameter(5, pattern).getResultList();
+
+		return results.stream().map(row -> new AlbumResponseDto(((Number) row[0]).intValue(), (String) row[1],
+				(String) row[2], (String) row[3], (String) row[4], ((Number) row[5]).intValue(), (String) row[6])).toList();
+	}
+
+}
