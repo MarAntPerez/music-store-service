@@ -12,7 +12,7 @@ import jakarta.transaction.Transactional;
 
 @Repository
 @Transactional
-public class GenerRepository {
+public class GenreRepository {
 
 	@PersistenceContext
 	private EntityManager entityManager = null;

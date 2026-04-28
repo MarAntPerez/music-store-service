@@ -20,7 +20,7 @@ public class FormatRepository {
 	public int save(FormatEntity format) {
 		String sql = "INSERT INTO formats (format_type) VALUES = (?)";
 
-		return entityManager.createNativeQuery(sql).setParameter(1, format.getFormat_type()).executeUpdate();
+		return entityManager.createNativeQuery(sql).setParameter(1, format.getFormatType()).executeUpdate();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -43,7 +43,7 @@ public class FormatRepository {
 	public int update(Integer id, FormatEntity format) {
 		String sql = "UPDATE formats SET format_type = ? WHERE id = ?";
 
-		return entityManager.createNativeQuery(sql).setParameter(1, format.getFormat_type()).setParameter(2, id)
+		return entityManager.createNativeQuery(sql).setParameter(1, format.getFormatType()).setParameter(2, id)
 				.executeUpdate();
 	}
 

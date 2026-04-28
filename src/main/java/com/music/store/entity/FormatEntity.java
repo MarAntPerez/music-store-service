@@ -17,13 +17,13 @@ public class FormatEntity {
 	private Integer id;
 
 	@Column(name = "format_type", nullable = false)
-	private String format_type;
+	private String formatType;
 
 	protected FormatEntity() {
 	}
 
-	public FormatEntity(String format_type) {
-		this.format_type = format_type;
+	public FormatEntity(String formatType) {
+		this.formatType = formatType;
 	}
 
 	public Integer getId() {
@@ -34,12 +34,12 @@ public class FormatEntity {
 		this.id = id;
 	}
 
-	public String getFormat_type() {
-		return format_type;
+	public String getFormatType() {
+		return formatType;
 	}
 
-	public void setFormat_type(String format_type) {
-		this.format_type = format_type;
+	public void setFormatType(String formatType) {
+		this.formatType = formatType;
 	}
 
 }

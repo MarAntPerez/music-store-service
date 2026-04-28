@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.music.store.dto.AlbumResponseDto;
+import com.music.store.dto.YearResponse;
 import com.music.store.entity.AlbumEntity;
 import com.music.store.service.AlbumService;
 
@@ -37,7 +38,7 @@ public class AlbumController {
 	}
 
 	@GetMapping
-	public List<AlbumEntity> getAllAlbums() {
+	public List<AlbumResponseDto> getAllAlbums() {
 		return albumService.getAllAlbums();
 	}
 
@@ -99,6 +100,11 @@ public class AlbumController {
 	@GetMapping("/search")
 	public List<AlbumResponseDto> globalSearch(@RequestParam(required = false) String query) {
 		return albumService.globalSearch(query);
+	}
+	
+	@GetMapping("/years")
+	public List<YearResponse> getYears(){
+		return albumService.getYears();
 	}
 
 }

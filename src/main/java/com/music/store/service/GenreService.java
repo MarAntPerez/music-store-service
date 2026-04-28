@@ -6,13 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.music.store.entity.GenerEntity;
-import com.music.store.repository.GenerRepository;
+import com.music.store.repository.GenreRepository;
 
 @Service
-public class GenerService {
+public class GenreService {
 
 	@Autowired
-	private GenerRepository generRepository;
+	private GenreRepository generRepository;
 
 	public boolean createGenre(GenerEntity genre) {
 		int result = generRepository.save(genre);

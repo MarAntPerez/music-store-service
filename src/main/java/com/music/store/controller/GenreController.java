@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.music.store.entity.GenerEntity;
-import com.music.store.service.GenerService;
+import com.music.store.service.GenreService;
 
 @RestController
 @RequestMapping("/genres")
-public class GenerController {
+public class GenreController {
 
 	@Autowired
-	private GenerService generService;
+	private GenreService generService;
 
 	@PostMapping
 	public ResponseEntity<String> CreateGenre(@RequestBody GenerEntity genre) {

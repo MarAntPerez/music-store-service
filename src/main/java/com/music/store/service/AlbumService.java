@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.music.store.dto.AlbumResponseDto;
+import com.music.store.dto.YearResponse;
 import com.music.store.entity.AlbumEntity;
 import com.music.store.repository.AlbumRepository;
 
@@ -22,7 +23,7 @@ public class AlbumService {
 		return result > 0;
 	}
 
-	public List<AlbumEntity> getAllAlbums() {
+	public List<AlbumResponseDto> getAllAlbums() {
 		return albumRepository.findAll();
 	}
 
@@ -64,6 +65,10 @@ public class AlbumService {
 		}
 
 		return albumRepository.globalSearch(searchText);
+	}
+
+	public List<YearResponse> getYears() {
+		return albumRepository.getYears();
 	}
 
 }

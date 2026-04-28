@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.music.store.dto.AlbumResponseDto;
+import com.music.store.dto.YearResponse;
 import com.music.store.entity.AlbumEntity;
 
 import jakarta.persistence.EntityManager;
@@ -33,10 +34,32 @@ public class AlbumRepository {
 
 	// DEVUELVE TODOS LOS ALBUMS
 	@SuppressWarnings("unchecked")
-	public List<AlbumEntity> findAll() {
-		String sql = "SELECT * FROM albums";
+	public List<AlbumResponseDto> findAll() {
 
-		return entityManager.createNativeQuery(sql, AlbumEntity.class).getResultList();
+		String sql = """
+				SELECT
+				    a.id,
+				    a.album_name,
+				    ar.artist_name,
+				    g.genres_name,
+				    f.format_type,
+				    a.year_release,
+				    a.image_url
+				FROM albums a
+				JOIN artists ar ON a.artist_id = ar.id
+				JOIN genres g ON a.genre_id = g.id
+				JOIN formats f ON a.format_id = f.id
+				""";
+
+		List<Object[]> results = entityManager.createNativeQuery(sql).getResultList();
+
+		return results.stream().map(row -> new AlbumResponseDto(
+
+				((Number) row[0]).intValue(), (String) row[1], (String) row[2], (String) row[3], (String) row[4],
+				((Number) row[5]).intValue(), (String) row[6]
+
+		)).toList();
+
 	}
 
 	// Devuelve un album especificado por el id
@@ -143,7 +166,21 @@ public class AlbumRepository {
 				.setParameter(3, pattern).setParameter(4, pattern).setParameter(5, pattern).getResultList();
 
 		return results.stream().map(row -> new AlbumResponseDto(((Number) row[0]).intValue(), (String) row[1],
-				(String) row[2], (String) row[3], (String) row[4], ((Number) row[5]).intValue(), (String) row[6])).toList();
+				(String) row[2], (String) row[3], (String) row[4], ((Number) row[5]).intValue(), (String) row[6]))
+				.toList();
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<YearResponse> getYears() {
+
+		String sql = """
+				SELECT DISTINCT year_release
+				FROM albums
+				ORDER BY year_release
+				""";
+
+		List<Number> results = entityManager.createNativeQuery(sql).getResultList();
+
+		return results.stream().map(year -> new YearResponse(year.intValue())).toList();
+	}
 }
