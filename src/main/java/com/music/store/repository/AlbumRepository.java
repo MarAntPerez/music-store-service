@@ -63,14 +63,32 @@ public class AlbumRepository {
 	}
 
 	// Devuelve un album especificado por el id
-	@SuppressWarnings("unchecked")
-	public AlbumEntity findById(Integer id) {
-		String sql = "SELECT * FROM albums WHERE id = ?";
+	public AlbumResponseDto findById(Integer albumId) {
+		String sql = """
+				SELECT
+				    a.id,
+				    a.album_name,
+				    ar.artist_name,
+				    g.genres_name,
+				    f.format_type,
+				    a.year_release,
+				    a.image_url
+				FROM albums a
+				JOIN artists ar ON a.artist_id = ar.id
+				JOIN genres g ON a.genre_id = g.id
+				JOIN formats f ON a.format_id = f.id
+				WHERE a.id = :albumId
+				""";
 
-		List<AlbumEntity> result = entityManager.createNativeQuery(sql, AlbumEntity.class).setParameter(1, id)
-				.getResultList();
+		Object[] row = (Object[]) entityManager.createNativeQuery(sql).setParameter("albumId", albumId)
+				.getSingleResult();
 
-		return result.isEmpty() ? null : result.get(0);
+		return new AlbumResponseDto(
+
+				((Number) row[0]).intValue(), (String) row[1], (String) row[2], (String) row[3], (String) row[4],
+				((Number) row[5]).intValue(), (String) row[6]
+
+		);
 	}
 
 	// Actualiza la informacion de un album
@@ -104,36 +122,125 @@ public class AlbumRepository {
 
 	// Buscar albums de un artista en especifico
 	@SuppressWarnings("unchecked")
-	public List<AlbumEntity> findByArtist(Integer artistId) {
-		String sql = "SELECT * FROM albums a WHERE a.artist_id = ?";
+	public List<AlbumResponseDto> findByArtist(Integer artistId) {
+		String sql = """
+				SELECT
+				    a.id,
+				    a.album_name,
+				    ar.artist_name,
+				    g.genres_name,
+				    f.format_type,
+				    a.year_release,
+				    a.image_url
+				FROM albums a
+				JOIN artists ar ON a.artist_id = ar.id
+				JOIN genres g ON a.genre_id = g.id
+				JOIN formats f ON a.format_id = f.id
+				WHERE ar.id = :artistId
+				ORDER BY a.year_release
+				""";
 
-		return entityManager.createNativeQuery(sql, AlbumEntity.class).setParameter(1, artistId).getResultList();
+		List<Object[]> results = entityManager.createNativeQuery(sql).setParameter("artistId", artistId)
+				.getResultList();
+
+		return results.stream().map(row -> new AlbumResponseDto(
+
+				((Number) row[0]).intValue(), (String) row[1], (String) row[2], (String) row[3], (String) row[4],
+				((Number) row[5]).intValue(), (String) row[6]
+
+		)).toList();
 	}
 
 	// Buscar albums por genero
 	@SuppressWarnings("unchecked")
-	public List<AlbumEntity> findByGenre(Integer genreId) {
+	public List<AlbumResponseDto> findByGenre(Integer genreId) {
 
-		String sql = "SELECT * FROM albums a WHERE a.genre_id = ?";
+		String sql = """
+				SELECT
+				    a.id,
+				    a.album_name,
+				    ar.artist_name,
+				    g.genres_name,
+				    f.format_type,
+				    a.year_release,
+				    a.image_url
+				FROM albums a
+				JOIN artists ar ON a.artist_id = ar.id
+				JOIN genres g ON a.genre_id = g.id
+				JOIN formats f ON a.format_id = f.id
+				WHERE g.id = :genreId
+				ORDER BY a.year_release
+				""";
 
-		return entityManager.createNativeQuery(sql, AlbumEntity.class).setParameter(1, genreId).getResultList();
+		List<Object[]> results = entityManager.createNativeQuery(sql).setParameter("genreId", genreId).getResultList();
+
+		return results.stream().map(row -> new AlbumResponseDto(
+
+				((Number) row[0]).intValue(), (String) row[1], (String) row[2], (String) row[3], (String) row[4],
+				((Number) row[5]).intValue(), (String) row[6]
+
+		)).toList();
 	}
 
 	// Buscar por formato
 	@SuppressWarnings("unchecked")
-	public List<AlbumEntity> findByFormat(Integer formatId) {
+	public List<AlbumResponseDto> findByFormat(Integer formatId) {
 
-		String sql = "SELECT * FROM albums a WHERE a.format_id = ?";
+		String sql = """
+				SELECT
+				    a.id,
+				    a.album_name,
+				    ar.artist_name,
+				    g.genres_name,
+				    f.format_type,
+				    a.year_release,
+				    a.image_url
+				FROM albums a
+				JOIN artists ar ON a.artist_id = ar.id
+				JOIN genres g ON a.genre_id = g.id
+				JOIN formats f ON a.format_id = f.id
+				WHERE f.id = :formatId
+				ORDER BY a.year_release
+				""";
 
-		return entityManager.createNativeQuery(sql, AlbumEntity.class).setParameter(1, formatId).getResultList();
+		List<Object[]> results = entityManager.createNativeQuery(sql).setParameter("formatId", formatId).getResultList();
+
+		return results.stream().map(row -> new AlbumResponseDto(
+
+				((Number) row[0]).intValue(), (String) row[1], (String) row[2], (String) row[3], (String) row[4],
+				((Number) row[5]).intValue(), (String) row[6]
+
+		)).toList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<AlbumEntity> findByYear(Integer year) {
+	public List<AlbumResponseDto> findByYear(Integer year) {
 
-		String sql = "SELECT * FROM albums a WHERE a.year_release = ?";
+		String sql = """
+				SELECT
+				    a.id,
+				    a.album_name,
+				    ar.artist_name,
+				    g.genres_name,
+				    f.format_type,
+				    a.year_release,
+				    a.image_url
+				FROM albums a
+				JOIN artists ar ON a.artist_id = ar.id
+				JOIN genres g ON a.genre_id = g.id
+				JOIN formats f ON a.format_id = f.id
+				WHERE a.year_release = :year
+				ORDER BY a.year_release
+				""";
 
-		return entityManager.createNativeQuery(sql, AlbumEntity.class).setParameter(1, year).getResultList();
+		List<Object[]> results = entityManager.createNativeQuery(sql).setParameter("year", year).getResultList();
+
+		return results.stream().map(row -> new AlbumResponseDto(
+
+				((Number) row[0]).intValue(), (String) row[1], (String) row[2], (String) row[3], (String) row[4],
+				((Number) row[5]).intValue(), (String) row[6]
+
+		)).toList();
 	}
 
 	@SuppressWarnings("unchecked")

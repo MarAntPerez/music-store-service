@@ -5,6 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.music.store.dto.ArtistStatsDto;
+import com.music.store.dto.AvailabilityDto;
+import com.music.store.dto.InventoryValueDto;
 import com.music.store.entity.InventoryEntity;
 import com.music.store.repository.InventoryRepository;
 
@@ -38,6 +41,26 @@ public class InventoryService {
 		int result = inventoryRepository.delete(id);
 
 		return result > 0;
+	}
+
+	public List<AvailabilityDto> getAvailability(String genre, String format) {
+		return inventoryRepository.findAvailableByGenreAndFormat(genre, format).stream()
+				.map(row -> new AvailabilityDto((String) row[0], (String) row[1], ((Number) row[2]).intValue(),
+						((Number) row[3]).doubleValue()))
+				.toList();
+	}
+
+	public List<InventoryValueDto> getInventoryValue() {
+		return inventoryRepository.getInventoryValueByFormat().stream()
+				.map(row -> new InventoryValueDto((String) row[0], ((Number) row[1]).intValue(),
+						((Double) row[2]).doubleValue()))
+				.toList();
+	}
+
+	public List<ArtistStatsDto> getTopArtist() {
+		return inventoryRepository.getTopArtist().stream().map(
+				row -> new ArtistStatsDto((String) row[0], ((Number) row[1]).intValue(), ((Number) row[2]).intValue()))
+				.toList();
 	}
 
 }

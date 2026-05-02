@@ -27,7 +27,7 @@ public class AlbumService {
 		return albumRepository.findAll();
 	}
 
-	public AlbumEntity getAlbumById(Integer id) {
+	public AlbumResponseDto  getAlbumById(Integer id) {
 		return albumRepository.findById(id);
 	}
 
@@ -43,19 +43,19 @@ public class AlbumService {
 		return result > 0;
 	}
 
-	public List<AlbumEntity> getAlbumsByArtist(Integer artistId) {
+	public List<AlbumResponseDto> getAlbumsByArtist(Integer artistId) {
 		return albumRepository.findByArtist(artistId);
 	}
 
-	public List<AlbumEntity> getAlbumsByGenre(Integer genreId) {
+	public List<AlbumResponseDto> getAlbumsByGenre(Integer genreId) {
 		return albumRepository.findByGenre(genreId);
 	}
 
-	public List<AlbumEntity> getAlbumsByFormat(Integer formatId) {
+	public List<AlbumResponseDto> getAlbumsByFormat(Integer formatId) {
 		return albumRepository.findByFormat(formatId);
 	}
 
-	public List<AlbumEntity> getAlbumsByYear(Integer year) {
+	public List<AlbumResponseDto> getAlbumsByYear(Integer year) {
 		return albumRepository.findByYear(year);
 	}
 

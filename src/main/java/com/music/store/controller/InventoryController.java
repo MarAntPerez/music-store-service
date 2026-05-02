@@ -11,8 +11,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.music.store.dto.ArtistStatsDto;
+import com.music.store.dto.AvailabilityDto;
+import com.music.store.dto.InventoryValueDto;
 import com.music.store.entity.InventoryEntity;
 import com.music.store.service.InventoryService;
 
@@ -70,6 +74,21 @@ public class InventoryController {
 		} else {
 			return ResponseEntity.notFound().build();
 		}
+	}
+
+	@GetMapping("/availability")
+	public List<AvailabilityDto> getAvailability(@RequestParam String genre, @RequestParam String format) {
+		return inventoryService.getAvailability(genre, format);
+	}
+
+	@GetMapping("/value")
+	public List<InventoryValueDto> getInventoryValueDto() {
+		return inventoryService.getInventoryValue();
+	}
+
+	@GetMapping("/artist/top")
+	public List<ArtistStatsDto> getTopArtist() {
+		return inventoryService.getTopArtist();
 	}
 
 }

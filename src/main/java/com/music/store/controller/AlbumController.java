@@ -43,8 +43,8 @@ public class AlbumController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<AlbumEntity> getAlbumById(@PathVariable Integer id) {
-		AlbumEntity album = albumService.getAlbumById(id);
+	public ResponseEntity<AlbumResponseDto > getAlbumById(@PathVariable Integer id) {
+		AlbumResponseDto  album = albumService.getAlbumById(id);
 
 		if (album != null) {
 			return ResponseEntity.ok(album);
@@ -78,22 +78,22 @@ public class AlbumController {
 	}
 
 	@GetMapping("/artist/{artistId}")
-	public List<AlbumEntity> getAlbumsByArtist(@PathVariable Integer artistId) {
+	public List<AlbumResponseDto> getAlbumsByArtist(@PathVariable Integer artistId) {
 		return albumService.getAlbumsByArtist(artistId);
 	}
 
 	@GetMapping("/genre/{genreId}")
-	public List<AlbumEntity> getAlbumsByGenre(@PathVariable Integer genreId) {
+	public List<AlbumResponseDto> getAlbumsByGenre(@PathVariable Integer genreId) {
 		return albumService.getAlbumsByGenre(genreId);
 	}
 
 	@GetMapping("/format/{formatId}")
-	public List<AlbumEntity> getAlbumsByFormat(@PathVariable Integer formatId) {
+	public List<AlbumResponseDto> getAlbumsByFormat(@PathVariable Integer formatId) {
 		return albumService.getAlbumsByFormat(formatId);
 	}
 
 	@GetMapping("/year/{year}")
-	public List<AlbumEntity> getAlbumeByYear(@PathVariable Integer year) {
+	public List<AlbumResponseDto> getAlbumeByYear(@PathVariable Integer year) {
 		return albumService.getAlbumsByYear(year);
 	}
 
