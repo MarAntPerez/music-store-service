@@ -9,9 +9,10 @@ public class AlbumResponseDto {
 	private String formatType;
 	private Integer yearRelease;
 	private String imageUrl;
+	private Float cost;
 
 	public AlbumResponseDto(Integer id, String albumName, String artistName, String genreName, String formatType,
-			Integer yearRelease, String imageUrl) {
+			Integer yearRelease, String imageUrl, Float cost) {
 		this.id = id;
 		this.albumName = albumName;
 		this.artistName = artistName;
@@ -19,6 +20,7 @@ public class AlbumResponseDto {
 		this.formatType = formatType;
 		this.yearRelease = yearRelease;
 		this.imageUrl = imageUrl;
+		this.cost = cost;
 	}
 
 	public Integer getId() {
@@ -75,6 +77,14 @@ public class AlbumResponseDto {
 
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
+	}
+
+	public Float getCost() {
+		return cost;
+	}
+
+	public void setCost(Float cost) {
+		this.cost = cost;
 	}
 
 }

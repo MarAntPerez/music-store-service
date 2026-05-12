@@ -91,4 +91,25 @@ public class InventoryController {
 		return inventoryService.getTopArtist();
 	}
 
+	@PostMapping("/sell/{albumId}")
+	public ResponseEntity<?> sellAlbum(@PathVariable Integer albumId) {
+		boolean sold = inventoryService.sellAlbum(albumId);
+		if (!sold) {
+			return ResponseEntity.badRequest().body("Album no disponibles");
+		}
+
+		return ResponseEntity.ok("Venta completada");
+	}
+
+	@PostMapping("/restore/{albumId}")
+	public ResponseEntity<?> restoreAlbum(@PathVariable Integer albumId) {
+		boolean restored = inventoryService.restoreAlbum(albumId);
+
+		if (!restored) {
+			ResponseEntity.badRequest().body("Album no disponible");
+		}
+
+		return ResponseEntity.ok("Inventario restaurado");
+	}
+
 }

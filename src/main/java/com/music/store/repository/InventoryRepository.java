@@ -24,6 +24,19 @@ public class InventoryRepository {
 				.setParameter(2, inventory.getAmount()).setParameter(3, inventory.getCost()).executeUpdate();
 	}
 
+	public int update(InventoryEntity inventory) {
+
+		String sql = """
+				UPDATE inventory
+				SET amount = ?,
+				    cost = ?
+				WHERE album_id = ?
+				""";
+
+		return entityManager.createNativeQuery(sql).setParameter(1, inventory.getAmount())
+				.setParameter(2, inventory.getCost()).setParameter(3, inventory.getAlbumId()).executeUpdate();
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<InventoryEntity> findAll() {
 		String sql = "SELECT * FROM inventory";
@@ -109,6 +122,20 @@ public class InventoryRepository {
 				""";
 
 		return entityManager.createNativeQuery(sql).getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public InventoryEntity findByAlbumId(Integer albumId) {
+		String sql = """
+				    SELECT *
+				    FROM inventory
+				    WHERE album_id = :albumId
+				""";
+
+		List<InventoryEntity> result = entityManager.createNativeQuery(sql, InventoryEntity.class)
+				.setParameter("albumId", albumId).getResultList();
+
+		return result.isEmpty() ? null : result.get(0);
 	}
 
 }

@@ -44,11 +44,13 @@ public class AlbumRepository {
 				    g.genres_name,
 				    f.format_type,
 				    a.year_release,
-				    a.image_url
+				    a.image_url,
+				    i.cost
 				FROM albums a
 				JOIN artists ar ON a.artist_id = ar.id
 				JOIN genres g ON a.genre_id = g.id
 				JOIN formats f ON a.format_id = f.id
+				JOIN inventory i ON a.id = i.album_id
 				""";
 
 		List<Object[]> results = entityManager.createNativeQuery(sql).getResultList();
@@ -56,7 +58,7 @@ public class AlbumRepository {
 		return results.stream().map(row -> new AlbumResponseDto(
 
 				((Number) row[0]).intValue(), (String) row[1], (String) row[2], (String) row[3], (String) row[4],
-				((Number) row[5]).intValue(), (String) row[6]
+				((Number) row[5]).intValue(), (String) row[6], ((Number) row[7]).floatValue()
 
 		)).toList();
 
@@ -72,11 +74,13 @@ public class AlbumRepository {
 				    g.genres_name,
 				    f.format_type,
 				    a.year_release,
-				    a.image_url
+				    a.image_url,
+				    i.cost
 				FROM albums a
 				JOIN artists ar ON a.artist_id = ar.id
 				JOIN genres g ON a.genre_id = g.id
 				JOIN formats f ON a.format_id = f.id
+				JOIN inventory i ON a.id = i.album_id
 				WHERE a.id = :albumId
 				""";
 
@@ -86,7 +90,7 @@ public class AlbumRepository {
 		return new AlbumResponseDto(
 
 				((Number) row[0]).intValue(), (String) row[1], (String) row[2], (String) row[3], (String) row[4],
-				((Number) row[5]).intValue(), (String) row[6]
+				((Number) row[5]).intValue(), (String) row[6], ((Number) row[7]).floatValue()
 
 		);
 	}
@@ -97,7 +101,7 @@ public class AlbumRepository {
 		String sql = """
 				UPDATE albums
 				SET artist_id = ?,
-					genre = ?,
+					genre_id = ?,
 					format_id = ?,
 					album_name = ?,
 					year_release = ?
@@ -131,11 +135,13 @@ public class AlbumRepository {
 				    g.genres_name,
 				    f.format_type,
 				    a.year_release,
-				    a.image_url
+				    a.image_url,
+				    i.cost
 				FROM albums a
 				JOIN artists ar ON a.artist_id = ar.id
 				JOIN genres g ON a.genre_id = g.id
 				JOIN formats f ON a.format_id = f.id
+				JOIN inventory i ON a.id = i.album_id
 				WHERE ar.id = :artistId
 				ORDER BY a.year_release
 				""";
@@ -146,7 +152,7 @@ public class AlbumRepository {
 		return results.stream().map(row -> new AlbumResponseDto(
 
 				((Number) row[0]).intValue(), (String) row[1], (String) row[2], (String) row[3], (String) row[4],
-				((Number) row[5]).intValue(), (String) row[6]
+				((Number) row[5]).intValue(), (String) row[6], ((Number) row[7]).floatValue()
 
 		)).toList();
 	}
@@ -163,11 +169,13 @@ public class AlbumRepository {
 				    g.genres_name,
 				    f.format_type,
 				    a.year_release,
-				    a.image_url
+				    a.image_url,
+				    i.cost
 				FROM albums a
 				JOIN artists ar ON a.artist_id = ar.id
 				JOIN genres g ON a.genre_id = g.id
 				JOIN formats f ON a.format_id = f.id
+				JOIN inventory i ON a.id = i.album_id
 				WHERE g.id = :genreId
 				ORDER BY a.year_release
 				""";
@@ -177,7 +185,7 @@ public class AlbumRepository {
 		return results.stream().map(row -> new AlbumResponseDto(
 
 				((Number) row[0]).intValue(), (String) row[1], (String) row[2], (String) row[3], (String) row[4],
-				((Number) row[5]).intValue(), (String) row[6]
+				((Number) row[5]).intValue(), (String) row[6], ((Number) row[7]).floatValue()
 
 		)).toList();
 	}
@@ -194,21 +202,24 @@ public class AlbumRepository {
 				    g.genres_name,
 				    f.format_type,
 				    a.year_release,
-				    a.image_url
+				    a.image_url,
+				    i.cost
 				FROM albums a
 				JOIN artists ar ON a.artist_id = ar.id
 				JOIN genres g ON a.genre_id = g.id
 				JOIN formats f ON a.format_id = f.id
+				JOIN inventory i ON a.id = i.album_id
 				WHERE f.id = :formatId
 				ORDER BY a.year_release
 				""";
 
-		List<Object[]> results = entityManager.createNativeQuery(sql).setParameter("formatId", formatId).getResultList();
+		List<Object[]> results = entityManager.createNativeQuery(sql).setParameter("formatId", formatId)
+				.getResultList();
 
 		return results.stream().map(row -> new AlbumResponseDto(
 
 				((Number) row[0]).intValue(), (String) row[1], (String) row[2], (String) row[3], (String) row[4],
-				((Number) row[5]).intValue(), (String) row[6]
+				((Number) row[5]).intValue(), (String) row[6], ((Number) row[7]).floatValue()
 
 		)).toList();
 	}
@@ -224,11 +235,13 @@ public class AlbumRepository {
 				    g.genres_name,
 				    f.format_type,
 				    a.year_release,
-				    a.image_url
+				    a.image_url,
+				    i.cost
 				FROM albums a
 				JOIN artists ar ON a.artist_id = ar.id
 				JOIN genres g ON a.genre_id = g.id
 				JOIN formats f ON a.format_id = f.id
+				JOIN inventory i ON a.id = i.album_id
 				WHERE a.year_release = :year
 				ORDER BY a.year_release
 				""";
@@ -238,7 +251,7 @@ public class AlbumRepository {
 		return results.stream().map(row -> new AlbumResponseDto(
 
 				((Number) row[0]).intValue(), (String) row[1], (String) row[2], (String) row[3], (String) row[4],
-				((Number) row[5]).intValue(), (String) row[6]
+				((Number) row[5]).intValue(), (String) row[6], ((Number) row[7]).floatValue()
 
 		)).toList();
 	}
@@ -253,11 +266,13 @@ public class AlbumRepository {
 				        g.genres_name,
 				        f.format_type,
 				        a.year_release,
-				        a.image_url
+				        a.image_url,
+				        i.cost
 				    FROM albums a
 				    JOIN artists ar ON a.artist_id = ar.id
 				    JOIN genres g ON a.genre_id = g.id
 				    JOIN formats f ON a.format_id = f.id
+				    JOIN inventory i ON a.id = i.album_id
 				    WHERE
 				        LOWER(a.album_name) LIKE LOWER(?)
 				    OR LOWER(ar.artist_name) LIKE LOWER(?)
@@ -272,8 +287,10 @@ public class AlbumRepository {
 		List<Object[]> results = entityManager.createNativeQuery(sql).setParameter(1, pattern).setParameter(2, pattern)
 				.setParameter(3, pattern).setParameter(4, pattern).setParameter(5, pattern).getResultList();
 
-		return results.stream().map(row -> new AlbumResponseDto(((Number) row[0]).intValue(), (String) row[1],
-				(String) row[2], (String) row[3], (String) row[4], ((Number) row[5]).intValue(), (String) row[6]))
+		return results.stream()
+				.map(row -> new AlbumResponseDto(((Number) row[0]).intValue(), (String) row[1], (String) row[2],
+						(String) row[3], (String) row[4], ((Number) row[5]).intValue(), (String) row[6],
+						((Number) row[7]).floatValue()))
 				.toList();
 	}
 
