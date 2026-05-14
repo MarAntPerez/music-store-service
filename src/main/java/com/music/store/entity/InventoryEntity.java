@@ -25,7 +25,7 @@ public class InventoryEntity {
 	@Column(name = "cost", nullable = false)
 	private float cost;
 
-	protected InventoryEntity() {
+	public InventoryEntity() {
 	}
 
 	public InventoryEntity(Integer albumId, int amount, float cost) {

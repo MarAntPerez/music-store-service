@@ -20,16 +20,33 @@ public class AlbumRepository {
 	private EntityManager entityManager = null;
 
 	// INSERTA UN ALBUM NUEVO
-	public int save(AlbumEntity album) {
+	public Integer save(AlbumEntity album) {
+
 		String sql = """
 				INSERT INTO albums
-				(artist_id, genre_id, format_id, album_name, year_release)
-				VALUES (?, ?, ?, ?, ?)
+				(
+					artist_id,
+					genre_id,
+					format_id,
+					album_name,
+					year_release,
+					image_url
+				)
+				VALUES (?, ?, ?, ?, ?, ?)
 				""";
 
-		return entityManager.createNativeQuery(sql).setParameter(1, album.getArtistId())
-				.setParameter(2, album.getGenreId()).setParameter(3, album.getFormatId())
-				.setParameter(4, album.getAlbumName()).setParameter(5, album.getYearRelease()).executeUpdate();
+		entityManager.createNativeQuery(sql).setParameter(1, album.getArtistId()).setParameter(2, album.getGenreId())
+				.setParameter(3, album.getFormatId()).setParameter(4, album.getAlbumName())
+				.setParameter(5, album.getYearRelease()).setParameter(6, album.getImageUrl()).executeUpdate();
+
+		String lastIdSql = """
+				SELECT MAX(id)
+				FROM albums
+				""";
+
+		Number result = (Number) entityManager.createNativeQuery(lastIdSql).getSingleResult();
+
+		return result.intValue();
 	}
 
 	// DEVUELVE TODOS LOS ALBUMS
@@ -100,18 +117,13 @@ public class AlbumRepository {
 
 		String sql = """
 				UPDATE albums
-				SET artist_id = ?,
-					genre_id = ?,
-					format_id = ?,
-					album_name = ?,
+				SET album_name = ?,
 					year_release = ?
 				WHERE id = ?
 				""";
 
-		return entityManager.createNativeQuery(sql).setParameter(1, album.getArtistId())
-				.setParameter(2, album.getGenreId()).setParameter(3, album.getFormatId())
-				.setParameter(4, album.getAlbumName()).setParameter(5, album.getYearRelease()).setParameter(6, id)
-				.executeUpdate();
+		return entityManager.createNativeQuery(sql).setParameter(1, album.getAlbumName())
+				.setParameter(2, album.getYearRelease()).setParameter(3, id).executeUpdate();
 	}
 
 	// Elimina un album

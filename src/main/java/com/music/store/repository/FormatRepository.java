@@ -18,9 +18,20 @@ public class FormatRepository {
 	private EntityManager entityManager = null;
 
 	public int save(FormatEntity format) {
-		String sql = "INSERT INTO formats (format_type) VALUES = (?)";
+		Integer existingId = findByFormatType(format.getFormatType());
 
-		return entityManager.createNativeQuery(sql).setParameter(1, format.getFormatType()).executeUpdate();
+		if (existingId != null) {
+			return existingId;
+		}
+
+		String sql = """
+				INSERT INTO formats (format_type)
+				VALUES (?)
+				""";
+
+		entityManager.createNativeQuery(sql).setParameter(1, format.getFormatType()).executeUpdate();
+
+		return findByFormatType(format.getFormatType());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -53,6 +64,22 @@ public class FormatRepository {
 		int rowsAffected = entityManager.createNativeQuery(sql).setParameter(1, id).executeUpdate();
 
 		return rowsAffected;
+	}
+
+	public Integer findByFormatType(String formatType) {
+		String sql = """
+				SELECT id
+				FROM formats
+				WHERE format_type = ?
+				""";
+
+		List<?> result = entityManager.createNativeQuery(sql).setParameter(1, formatType).getResultList();
+
+		if (result.isEmpty()) {
+			return null;
+		}
+
+		return ((Number) result.get(0)).intValue();
 	}
 
 }

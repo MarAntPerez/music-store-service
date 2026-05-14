@@ -23,17 +23,6 @@ public class ArtistController {
 	@Autowired
 	private ArtistService artistService;
 
-	@PostMapping
-	public ResponseEntity<String> createArtist(@RequestBody ArtistEntity artist) {
-		boolean created = artistService.createArtist(artist);
-
-		if (created) {
-			return ResponseEntity.ok("Artista guardado correctamente");
-		} else {
-			return ResponseEntity.badRequest().body("No fue posible guardar el artista");
-		}
-	}
-
 	@GetMapping
 	public List<ArtistEntity> getAllArtists() {
 		return artistService.getAllArtists();
@@ -70,6 +59,15 @@ public class ArtistController {
 		} else {
 			return ResponseEntity.notFound().build();
 		}
+	}
+
+	@PostMapping
+	public ResponseEntity<ArtistEntity> saveArtist(@RequestBody ArtistEntity artist) {
+		Integer id = artistService.save(artist);
+
+		artist.setId(id);
+
+		return ResponseEntity.ok(artist);
 	}
 
 }

@@ -18,9 +18,20 @@ public class GenreRepository {
 	private EntityManager entityManager = null;
 
 	public int save(GenerEntity gener) {
-		String sql = "INSERT INTO genres (genres_name) VALUES (?)";
+		Integer existingId = findByGenre(gener.getGenresName());
 
-		return entityManager.createNativeQuery(sql).setParameter(1, gener.getGenresName()).executeUpdate();
+		if (existingId != null) {
+			return existingId;
+		}
+
+		String sql = """
+				INSERT INTO genres (genres_name)
+				VALUES (?)
+				""";
+
+		entityManager.createNativeQuery(sql).setParameter(1, gener.getGenresName()).executeUpdate();
+
+		return findByGenre(gener.getGenresName());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -51,6 +62,22 @@ public class GenreRepository {
 		String sql = "DELETE FROM genres WHERE id = ?";
 
 		return entityManager.createNativeQuery(sql).setParameter(1, id).executeUpdate();
+	}
+
+	public Integer findByGenre(String genres_name) {
+		String sql = """
+				SELECT id
+				FROM genres
+				WHERE genres_name = ?
+				""";
+
+		List<?> result = entityManager.createNativeQuery(sql).setParameter(1, genres_name).getResultList();
+
+		if (result.isEmpty()) {
+			return null;
+		}
+
+		return ((Number) result.get(0)).intValue();
 	}
 
 }

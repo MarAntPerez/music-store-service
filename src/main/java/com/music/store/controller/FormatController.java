@@ -23,17 +23,6 @@ public class FormatController {
 	@Autowired
 	private FormatService formatService;
 
-	@PostMapping
-	public ResponseEntity<String> createFormat(@RequestBody FormatEntity format) {
-		boolean created = formatService.createFormat(format);
-
-		if (created) {
-			return ResponseEntity.ok("Formato creado correctamente");
-		} else {
-			return ResponseEntity.badRequest().body("No fue posible crear el formato");
-		}
-	}
-
 	@GetMapping
 	public List<FormatEntity> getAllFormats() {
 		return formatService.getAllFormats();
@@ -71,6 +60,15 @@ public class FormatController {
 		} else {
 			return ResponseEntity.notFound().build();
 		}
+	}
+	
+	@PostMapping
+	public ResponseEntity<FormatEntity> saveArtist(@RequestBody FormatEntity format) {
+		Integer id = formatService.save(format);
+
+		format.setId(id);
+
+		return ResponseEntity.ok(format);
 	}
 
 }

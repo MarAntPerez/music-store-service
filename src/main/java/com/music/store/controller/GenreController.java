@@ -23,17 +23,6 @@ public class GenreController {
 	@Autowired
 	private GenreService generService;
 
-	@PostMapping
-	public ResponseEntity<String> CreateGenre(@RequestBody GenerEntity genre) {
-		boolean created = generService.createGenre(genre);
-
-		if (created) {
-			return ResponseEntity.ok("Genero creado correctamente");
-		} else {
-			return ResponseEntity.badRequest().body("No fue posible crear el genero");
-		}
-	}
-
 	@GetMapping
 	public List<GenerEntity> getAllGenres() {
 		return generService.getAllGenres();
@@ -71,6 +60,15 @@ public class GenreController {
 		} else {
 			return ResponseEntity.notFound().build();
 		}
+	}
+	
+	@PostMapping
+	public ResponseEntity<GenerEntity> saveArtist(@RequestBody GenerEntity gener) {
+		Integer id = generService.save(gener);
+
+		gener.setId(id);
+
+		return ResponseEntity.ok(gener);
 	}
 
 }

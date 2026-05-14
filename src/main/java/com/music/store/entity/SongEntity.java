@@ -30,11 +30,9 @@ public class SongEntity {
 
 	}
 
-	public SongEntity(int id, String songName, String duration, int trackNumber, int albumId) {
-		this.id = id;
+	public SongEntity(String songName, String duration, int albumId) {
 		this.songName = songName;
 		this.duration = duration;
-		this.trackNumber = trackNumber;
 		this.albumId = albumId;
 	}
 

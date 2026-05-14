@@ -19,9 +19,20 @@ public class ArtistRepository {
 
 	// Guarda un artista nuevo
 	public int save(ArtistEntity artist) {
-		String sql = "INSERT INTO artists (artist_name) VALUES (?)";
+		Integer existingId = findByName(artist.getArtistName());
 
-		return entityManager.createNativeQuery(sql).setParameter(1, artist.getArtistName()).executeUpdate();
+		if (existingId != null) {
+			return existingId;
+		}
+
+		String sql = """
+				INSERT INTO artists (artist_name)
+				VALUES (?)
+				""";
+
+		entityManager.createNativeQuery(sql).setParameter(1, artist.getArtistName()).executeUpdate();
+
+		return findByName(artist.getArtistName());
 	}
 
 	// Devuelve todos los artistas
@@ -58,6 +69,22 @@ public class ArtistRepository {
 		int rowsAffected = entityManager.createNativeQuery(sql).setParameter(1, id).executeUpdate();
 
 		return rowsAffected;
+	}
+
+	public Integer findByName(String artistName) {
+		String sql = """
+				SELECT id
+				FROM artists
+				WHERE artist_name = ?
+				""";
+
+		List<?> result = entityManager.createNativeQuery(sql).setParameter(1, artistName).getResultList();
+
+		if (result.isEmpty()) {
+			return null;
+		}
+
+		return ((Number) result.get(0)).intValue();
 	}
 
 }

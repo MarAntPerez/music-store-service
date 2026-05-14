@@ -40,4 +40,8 @@ public class GenreService {
 		return result > 0;
 	}
 
+	public Integer save(GenerEntity gener) {
+		return generRepository.save(gener);
+	}
+
 }

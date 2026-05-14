@@ -32,10 +32,14 @@ public class ArtistService {
 		int result = artistRepository.update(id, artist);
 		return result > 0;
 	}
-	
+
 	public boolean deleteArtist(Integer id) {
 		int result = artistRepository.delete(id);
 		return result > 0;
+	}
+
+	public Integer save(ArtistEntity artist) {
+		return artistRepository.save(artist);
 	}
 
 }

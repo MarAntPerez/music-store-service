@@ -34,7 +34,7 @@ public class AlbumEntity {
 	@Column(name = "image_url")
 	private String imageUrl;
 
-	protected AlbumEntity() {
+	public AlbumEntity() {
 
 	}
 
@@ -46,6 +46,12 @@ public class AlbumEntity {
 		this.albumName = albumName;
 		this.yearRelease = yearRelease;
 		this.imageUrl = imageUrl;
+	}
+
+	public AlbumEntity(String albumName, Integer yearRelease) {
+		super();
+		this.albumName = albumName;
+		this.yearRelease = yearRelease;
 	}
 
 	public Integer getId() {

@@ -5,11 +5,14 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.music.store.dto.SongResponseDto;
+import com.music.store.entity.SongEntity;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 
 @Repository
+@Transactional
 public class SongRepository {
 
 	@PersistenceContext
@@ -17,6 +20,7 @@ public class SongRepository {
 
 	@SuppressWarnings("unchecked")
 	public List<SongResponseDto> getSongsByAlbumId(int albumId) {
+
 		String sql = """
 				SELECT
 				    s.id,
@@ -32,9 +36,41 @@ public class SongRepository {
 
 		return results.stream().map(row -> new SongResponseDto(
 
-				((Number) row[0]).intValue(), (String) row[1], (String) row[2], ((Number) row[3]).intValue()
+				((Number) row[0]).intValue(),
+
+				(String) row[1],
+
+				(String) row[2],
+
+				row[3] != null ? ((Number) row[3]).intValue() : 0
 
 		)).toList();
+	}
+
+	public int getNextTrackNumber(int albumId) {
+
+		String sql = """
+				    SELECT COALESCE(MAX(track_number), 0) + 1
+				    FROM songs
+				    WHERE album_id = ?
+				""";
+
+		Number result = (Number) entityManager.createNativeQuery(sql).setParameter(1, albumId).getSingleResult();
+
+		return result.intValue();
+	}
+
+	public int save(SongEntity song) {
+
+		String sql = """
+				    INSERT INTO songs
+				    (song_name, duration, track_number, album_id)
+				    VALUES (?, ?, ?, ?)
+				""";
+
+		return entityManager.createNativeQuery(sql).setParameter(1, song.getSongName())
+				.setParameter(2, song.getDuration()).setParameter(3, song.getTrackNumber())
+				.setParameter(4, song.getAlbumId()).executeUpdate();
 	}
 
 }

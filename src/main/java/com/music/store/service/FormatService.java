@@ -38,4 +38,8 @@ public class FormatService {
 		return result > 0;
 	}
 
+	public Integer save(FormatEntity format) {
+		return formatRepository.save(format);
+	}
+
 }
