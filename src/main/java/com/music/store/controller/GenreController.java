@@ -63,7 +63,7 @@ public class GenreController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<GenerEntity> saveArtist(@RequestBody GenerEntity gener) {
+	public ResponseEntity<GenerEntity> saveGener(@RequestBody GenerEntity gener) {
 		Integer id = generService.save(gener);
 
 		gener.setId(id);

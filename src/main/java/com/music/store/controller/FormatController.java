@@ -63,7 +63,7 @@ public class FormatController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<FormatEntity> saveArtist(@RequestBody FormatEntity format) {
+	public ResponseEntity<FormatEntity> saveFormat(@RequestBody FormatEntity format) {
 		Integer id = formatService.save(format);
 
 		format.setId(id);
