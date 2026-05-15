@@ -28,4 +28,8 @@ public class SongService {
 		songRepository.save(song);
 	}
 
+	public boolean deleteSong(Integer songId) {
+		return songRepository.delete(songId);
+	}
+
 }

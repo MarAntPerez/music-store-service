@@ -73,4 +73,14 @@ public class SongRepository {
 				.setParameter(4, song.getAlbumId()).executeUpdate();
 	}
 
+	public boolean delete(Integer songId) {
+		
+		int rows = entityManager.createNativeQuery("""
+				    DELETE FROM songs
+				    WHERE id = :songId
+				""").setParameter("songId", songId).executeUpdate();
+
+		return rows > 0;
+	}
+
 }
