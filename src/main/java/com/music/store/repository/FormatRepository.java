@@ -58,12 +58,23 @@ public class FormatRepository {
 				.executeUpdate();
 	}
 
-	public int delete(Integer id) {
-		String sql = "DELETE FROM formats WHERE id = ?";
+	public boolean delete(Integer id) {
+		if (id == 0) {
+			return false;
+		}
 
-		int rowsAffected = entityManager.createNativeQuery(sql).setParameter(1, id).executeUpdate();
+		entityManager.createNativeQuery("""
+				    UPDATE albums
+				    SET format_id = 0
+				    WHERE format_id = :id
+				""").setParameter("id", id).executeUpdate();
 
-		return rowsAffected;
+		int rows = entityManager.createNativeQuery("""
+				    DELETE FROM formats
+				    WHERE id = :id
+				""").setParameter("id", id).executeUpdate();
+
+		return rows > 0;
 	}
 
 	public Integer findByFormatType(String formatType) {

@@ -35,9 +35,9 @@ public class GenreService {
 	}
 
 	public boolean deleteGenre(Integer id) {
-		int result = generRepository.delete(id);
+		boolean result = generRepository.delete(id);
 
-		return result > 0;
+		return result;
 	}
 
 	public Integer save(GenerEntity gener) {

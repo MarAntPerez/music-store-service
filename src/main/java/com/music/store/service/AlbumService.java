@@ -134,5 +134,11 @@ public class AlbumService {
 	public List<YearResponse> getYears() {
 		return albumRepository.getYears();
 	}
+	
+	public boolean deleteAnio(Integer year) {
+		boolean result = albumRepository.deleteAnio(year);
+		
+		return result;
+	}
 
 }

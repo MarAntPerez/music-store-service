@@ -58,10 +58,23 @@ public class GenreRepository {
 				.executeUpdate();
 	}
 
-	public int delete(Integer id) {
-		String sql = "DELETE FROM genres WHERE id = ?";
+	public boolean delete(Integer id) {
+		if (id == 0) {
+			return false;
+		}
 
-		return entityManager.createNativeQuery(sql).setParameter(1, id).executeUpdate();
+		entityManager.createNativeQuery("""
+				    UPDATE albums
+				    SET genre_id = 0
+				    WHERE genre_id = :id
+				""").setParameter("id", id).executeUpdate();
+
+		int rows = entityManager.createNativeQuery("""
+				    DELETE FROM genres
+				    WHERE id = :id
+				""").setParameter("id", id).executeUpdate();
+
+		return rows > 0;
 	}
 
 	public Integer findByGenre(String genres_name) {

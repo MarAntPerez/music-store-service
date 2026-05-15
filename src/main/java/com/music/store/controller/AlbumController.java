@@ -32,7 +32,8 @@ public class AlbumController {
 	private AlbumService albumService;
 
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<String> createAlbum(@ModelAttribute AlbumRequestDto album, @RequestParam(required = false) MultipartFile image) throws IOException {
+	public ResponseEntity<String> createAlbum(@ModelAttribute AlbumRequestDto album,
+			@RequestParam(required = false) MultipartFile image) throws IOException {
 		boolean created = albumService.createAlbum(album, image);
 
 		if (created) {
@@ -48,8 +49,8 @@ public class AlbumController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<AlbumResponseDto > getAlbumById(@PathVariable Integer id) {
-		AlbumResponseDto  album = albumService.getAlbumById(id);
+	public ResponseEntity<AlbumResponseDto> getAlbumById(@PathVariable Integer id) {
+		AlbumResponseDto album = albumService.getAlbumById(id);
 
 		if (album != null) {
 			return ResponseEntity.ok(album);
@@ -106,10 +107,21 @@ public class AlbumController {
 	public List<AlbumResponseDto> globalSearch(@RequestParam(required = false) String query) {
 		return albumService.globalSearch(query);
 	}
-	
+
 	@GetMapping("/years")
-	public List<YearResponse> getYears(){
+	public List<YearResponse> getYears() {
 		return albumService.getYears();
+	}
+
+	@PutMapping("/years/{year}")
+	public ResponseEntity<String> deleteYear(@PathVariable Integer year) {
+		boolean deletedAnio = albumService.deleteAnio(year);
+
+		if (deletedAnio) {
+			return ResponseEntity.ok("Año eliminado correctamente");
+		} else {
+			return ResponseEntity.badRequest().body("No fue posible eliminar el año");
+		}
 	}
 
 }

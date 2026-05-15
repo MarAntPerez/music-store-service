@@ -319,4 +319,20 @@ public class AlbumRepository {
 
 		return results.stream().map(year -> new YearResponse(year.intValue())).toList();
 	}
+
+	public boolean deleteAnio(Integer year) {
+		if (year == 0) {
+			return false;
+		}
+
+		int rows = entityManager.createNativeQuery("""
+				    UPDATE albums
+				    SET year_release = 0
+				    WHERE year_release = :year
+				""").setParameter("year", year).executeUpdate();
+
+		return rows > 0;
+
+	}
+
 }

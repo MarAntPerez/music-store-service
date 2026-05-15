@@ -34,8 +34,8 @@ public class FormatService {
 	}
 
 	public boolean deleteFormat(Integer id) {
-		int result = formatRepository.delete(id);
-		return result > 0;
+		boolean result = formatRepository.delete(id);
+		return result;
 	}
 
 	public Integer save(FormatEntity format) {
