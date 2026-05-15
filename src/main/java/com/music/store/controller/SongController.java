@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,6 +46,32 @@ public class SongController {
 		} else {
 			return ResponseEntity.badRequest().build();
 		}
+	}
+
+	@GetMapping("/{id}")
+	public ResponseEntity<SongEntity> findById(@PathVariable Integer id) {
+		SongEntity founded = songService.findById(id);
+
+		if (founded != null) {
+			return ResponseEntity.ok(founded);
+		} else {
+			return ResponseEntity.badRequest().build();
+		}
+	}
+
+	@PutMapping("/{id}")
+	public ResponseEntity<String> updateSong(@PathVariable Integer id, @RequestBody SongEntity song) {
+
+		boolean updated = songService.updateSong(id, song);
+
+		if (updated) {
+
+			return ResponseEntity.ok("Canción actualizada correctamente");
+
+		}
+
+		return ResponseEntity.badRequest().body("No se pudo actualizar la canción");
+
 	}
 
 }

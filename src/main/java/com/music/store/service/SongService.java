@@ -32,4 +32,16 @@ public class SongService {
 		return songRepository.delete(songId);
 	}
 
+	public SongEntity findById(Integer id) {
+		return songRepository.findById(id);
+	}
+
+	public boolean updateSong(Integer id, SongEntity song) {
+
+		int result = songRepository.update(id, song);
+
+		return result > 0;
+
+	}
+
 }

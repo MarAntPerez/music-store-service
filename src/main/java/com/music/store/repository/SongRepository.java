@@ -74,13 +74,50 @@ public class SongRepository {
 	}
 
 	public boolean delete(Integer songId) {
-		
+
 		int rows = entityManager.createNativeQuery("""
 				    DELETE FROM songs
 				    WHERE id = :songId
 				""").setParameter("songId", songId).executeUpdate();
 
 		return rows > 0;
+	}
+
+	public SongEntity findById(Integer id) {
+		String sql = """
+				SELECT
+				    id,
+				    album_id,
+				    song_name,
+				    duration
+				FROM songs
+				WHERE id = :songId
+				""";
+
+		Object[] row = (Object[]) entityManager.createNativeQuery(sql).setParameter("songId", id).getSingleResult();
+
+		SongEntity song = new SongEntity();
+
+		song.setId(((Number) row[0]).intValue());
+		song.setAlbumId(((Number) row[1]).intValue());
+		song.setSongName((String) row[2]);
+		song.setDuration((String) row[3]);
+
+		return song;
+	}
+
+	public int update(Integer id, SongEntity song) {
+
+		String sql = """
+				UPDATE songs
+				SET
+				    song_name = :songName,
+				    duration = :duration
+				WHERE id = :songId
+				""";
+
+		return entityManager.createNativeQuery(sql).setParameter("songName", song.getSongName())
+				.setParameter("duration", song.getDuration()).setParameter("songId", id).executeUpdate();
 	}
 
 }
