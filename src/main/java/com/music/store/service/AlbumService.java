@@ -95,10 +95,29 @@ public class AlbumService {
 		return albumRepository.findById(id);
 	}
 
-	public boolean updateAlbum(Integer id, AlbumEntity album) {
-		int result = albumRepository.update(id, album);
+	public boolean updateAlbum(Integer id, AlbumRequestDto album) {
+		try {
 
-		return result > 0;
+			AlbumEntity entity = dtoToEntity(album);
+
+			int albumResult = albumRepository.update(id, entity);
+
+			InventoryEntity inventory = new InventoryEntity();
+
+			inventory.setAlbumId(id);
+			inventory.setAmount(album.getStock());
+			inventory.setCost(album.getCost());
+
+			int inventoryResult = inventoryRepository.updateByAlbum(id, inventory);
+
+			return albumResult > 0 && inventoryResult > 0;
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+
+			return false;
+		}
 	}
 
 	public boolean deleteAlbum(Integer id) {
@@ -134,10 +153,10 @@ public class AlbumService {
 	public List<YearResponse> getYears() {
 		return albumRepository.getYears();
 	}
-	
+
 	public boolean deleteAnio(Integer year) {
 		boolean result = albumRepository.deleteAnio(year);
-		
+
 		return result;
 	}
 

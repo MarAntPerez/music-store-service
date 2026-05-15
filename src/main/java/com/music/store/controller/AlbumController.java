@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.music.store.dto.AlbumRequestDto;
 import com.music.store.dto.AlbumResponseDto;
 import com.music.store.dto.YearResponse;
-import com.music.store.entity.AlbumEntity;
 import com.music.store.service.AlbumService;
 
 @RestController
@@ -60,7 +59,7 @@ public class AlbumController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<String> updateAlbum(@PathVariable Integer id, @RequestBody AlbumEntity album) {
+	public ResponseEntity<String> updateAlbum(@PathVariable Integer id, @RequestBody AlbumRequestDto album) {
 
 		boolean updated = albumService.updateAlbum(id, album);
 
