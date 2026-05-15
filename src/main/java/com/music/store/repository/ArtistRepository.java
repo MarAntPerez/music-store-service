@@ -56,19 +56,31 @@ public class ArtistRepository {
 
 	// Actualiza la informacion de un artista
 	public int update(Integer id, ArtistEntity artist) {
-		String sql = "UPDATE artists SET artists_name = ? WHERE id = ?";
+		String sql = "UPDATE artists SET artist_name = ? WHERE id = ?";
 
 		return entityManager.createNativeQuery(sql).setParameter(1, artist.getArtistName()).setParameter(2, id)
 				.executeUpdate();
 	}
 
 	// Elimina un artista
-	public int delete(Integer id) {
-		String sql = "DELETE FROM artists WHERE id = ?";
+	public boolean delete(Integer id) {
 
-		int rowsAffected = entityManager.createNativeQuery(sql).setParameter(1, id).executeUpdate();
+		if (id == 0) {
+			return false;
+		}
 
-		return rowsAffected;
+		entityManager.createNativeQuery("""
+				    UPDATE albums
+				    SET artist_id = 0
+				    WHERE artist_id = :id
+				""").setParameter("id", id).executeUpdate();
+
+		int rows = entityManager.createNativeQuery("""
+				    DELETE FROM artists
+				    WHERE id = :id
+				""").setParameter("id", id).executeUpdate();
+
+		return rows > 0;
 	}
 
 	public Integer findByName(String artistName) {

@@ -34,8 +34,8 @@ public class ArtistService {
 	}
 
 	public boolean deleteArtist(Integer id) {
-		int result = artistRepository.delete(id);
-		return result > 0;
+		boolean result = artistRepository.delete(id);
+		return result;
 	}
 
 	public Integer save(ArtistEntity artist) {
