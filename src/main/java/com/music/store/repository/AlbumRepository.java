@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 import com.music.store.dto.AlbumResponseDto;
 import com.music.store.dto.YearResponse;
 import com.music.store.entity.AlbumEntity;
-import com.music.store.entity.InventoryEntity;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -136,9 +135,26 @@ public class AlbumRepository {
 	// Elimina un album
 	public int delete(Integer id) {
 
-		String sql = "DELETE FROM albums WHERE id = ?";
+		String deleteInventory = """
+				DELETE FROM inventory
+				WHERE album_id = ?
+				""";
 
-		int rowsAffected = entityManager.createNativeQuery(sql).setParameter(1, id).executeUpdate();
+		entityManager.createNativeQuery(deleteInventory).setParameter(1, id).executeUpdate();
+
+		String deleteSongs = """
+				DELETE FROM songs
+				WHERE album_id = ?
+				""";
+
+		entityManager.createNativeQuery(deleteSongs).setParameter(1, id).executeUpdate();
+
+		String deleteAlbum = """
+				DELETE FROM albums
+				WHERE id = ?
+				""";
+
+		int rowsAffected = entityManager.createNativeQuery(deleteAlbum).setParameter(1, id).executeUpdate();
 
 		return rowsAffected;
 	}
