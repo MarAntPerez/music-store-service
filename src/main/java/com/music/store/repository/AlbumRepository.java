@@ -9,6 +9,7 @@ import com.music.store.dto.YearResponse;
 import com.music.store.entity.AlbumEntity;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 
@@ -57,17 +58,18 @@ public class AlbumRepository {
 				SELECT
 				    a.id,
 				    a.album_name,
-				    ar.artist_name,
-				    g.genres_name,
-				    f.format_type,
+				    COALESCE(ar.artist_name, 'Desconocido'),
+				    COALESCE(g.genres_name, 'Desconocido'),
+				    COALESCE(f.format_type, 'Desconocido'),
 				    a.year_release,
 				    a.image_url,
-				    i.cost
+				    COALESCE(i.cost, 0)
 				FROM albums a
-				JOIN artists ar ON a.artist_id = ar.id
-				JOIN genres g ON a.genre_id = g.id
-				JOIN formats f ON a.format_id = f.id
-				JOIN inventory i ON a.id = i.album_id
+				LEFT JOIN artists ar ON a.artist_id = ar.id
+				LEFT JOIN genres g ON a.genre_id = g.id
+				LEFT JOIN formats f ON a.format_id = f.id
+				LEFT JOIN inventory i ON a.id = i.album_id
+				ORDER BY a.id DESC
 				""";
 
 		List<Object[]> results = entityManager.createNativeQuery(sql).getResultList();
@@ -83,33 +85,41 @@ public class AlbumRepository {
 
 	// Devuelve un album especificado por el id
 	public AlbumResponseDto findById(Integer albumId) {
-		String sql = """
-				SELECT
-				    a.id,
-				    a.album_name,
-				    ar.artist_name,
-				    g.genres_name,
-				    f.format_type,
-				    a.year_release,
-				    a.image_url,
-				    i.cost
-				FROM albums a
-				JOIN artists ar ON a.artist_id = ar.id
-				JOIN genres g ON a.genre_id = g.id
-				JOIN formats f ON a.format_id = f.id
-				JOIN inventory i ON a.id = i.album_id
-				WHERE a.id = :albumId
-				""";
+		try {
 
-		Object[] row = (Object[]) entityManager.createNativeQuery(sql).setParameter("albumId", albumId)
-				.getSingleResult();
+			String sql = """
+					SELECT
+					    a.id,
+					    a.album_name,
+					    COALESCE(ar.artist_name, 'Desconocido'),
+					    COALESCE(g.genres_name, 'Desconocido'),
+					    COALESCE(f.format_type, 'Desconocido'),
+					    a.year_release,
+					    a.image_url,
+					    COALESCE(i.cost, 0)
+					FROM albums a
+					LEFT JOIN artists ar ON a.artist_id = ar.id
+					LEFT JOIN genres g ON a.genre_id = g.id
+					LEFT JOIN formats f ON a.format_id = f.id
+					LEFT JOIN inventory i ON a.id = i.album_id
+					WHERE a.id = :albumId
+					""";
 
-		return new AlbumResponseDto(
+			Object[] row = (Object[]) entityManager.createNativeQuery(sql).setParameter("albumId", albumId)
+					.getSingleResult();
 
-				((Number) row[0]).intValue(), (String) row[1], (String) row[2], (String) row[3], (String) row[4],
-				((Number) row[5]).intValue(), (String) row[6], ((Number) row[7]).floatValue()
+			return new AlbumResponseDto(
 
-		);
+					((Number) row[0]).intValue(), (String) row[1], (String) row[2], (String) row[3], (String) row[4],
+					((Number) row[5]).intValue(), (String) row[6], ((Number) row[7]).floatValue()
+
+			);
+
+		} catch (NoResultException e) {
+
+			return null;
+
+		}
 	}
 
 	// Actualiza la informacion de un album
@@ -166,18 +176,18 @@ public class AlbumRepository {
 				SELECT
 				    a.id,
 				    a.album_name,
-				    ar.artist_name,
-				    g.genres_name,
-				    f.format_type,
+				    COALESCE(ar.artist_name, 'Desconocido'),
+				    COALESCE(g.genres_name, 'Desconocido'),
+				    COALESCE(f.format_type, 'Desconocido'),
 				    a.year_release,
 				    a.image_url,
-				    i.cost
+				    COALESCE(i.cost, 0)
 				FROM albums a
-				JOIN artists ar ON a.artist_id = ar.id
-				JOIN genres g ON a.genre_id = g.id
-				JOIN formats f ON a.format_id = f.id
-				JOIN inventory i ON a.id = i.album_id
-				WHERE ar.id = :artistId
+				LEFT JOIN artists ar ON a.artist_id = ar.id
+				LEFT JOIN genres g ON a.genre_id = g.id
+				LEFT JOIN formats f ON a.format_id = f.id
+				LEFT JOIN inventory i ON a.id = i.album_id
+				WHERE a.artist_id = :artistId
 				ORDER BY a.year_release
 				""";
 
@@ -200,18 +210,18 @@ public class AlbumRepository {
 				SELECT
 				    a.id,
 				    a.album_name,
-				    ar.artist_name,
-				    g.genres_name,
-				    f.format_type,
+				    COALESCE(ar.artist_name, 'Desconocido'),
+				    COALESCE(g.genres_name, 'Desconocido'),
+				    COALESCE(f.format_type, 'Desconocido'),
 				    a.year_release,
 				    a.image_url,
-				    i.cost
+				    COALESCE(i.cost, 0)
 				FROM albums a
-				JOIN artists ar ON a.artist_id = ar.id
-				JOIN genres g ON a.genre_id = g.id
-				JOIN formats f ON a.format_id = f.id
-				JOIN inventory i ON a.id = i.album_id
-				WHERE g.id = :genreId
+				LEFT JOIN artists ar ON a.artist_id = ar.id
+				LEFT JOIN genres g ON a.genre_id = g.id
+				LEFT JOIN formats f ON a.format_id = f.id
+				LEFT JOIN inventory i ON a.id = i.album_id
+				WHERE a.genre_id = :genreId
 				ORDER BY a.year_release
 				""";
 
@@ -233,18 +243,18 @@ public class AlbumRepository {
 				SELECT
 				    a.id,
 				    a.album_name,
-				    ar.artist_name,
-				    g.genres_name,
-				    f.format_type,
+				    COALESCE(ar.artist_name, 'Desconocido'),
+				    COALESCE(g.genres_name, 'Desconocido'),
+				    COALESCE(f.format_type, 'Desconocido'),
 				    a.year_release,
 				    a.image_url,
-				    i.cost
+				    COALESCE(i.cost, 0)
 				FROM albums a
-				JOIN artists ar ON a.artist_id = ar.id
-				JOIN genres g ON a.genre_id = g.id
-				JOIN formats f ON a.format_id = f.id
-				JOIN inventory i ON a.id = i.album_id
-				WHERE f.id = :formatId
+				LEFT JOIN artists ar ON a.artist_id = ar.id
+				LEFT JOIN genres g ON a.genre_id = g.id
+				LEFT JOIN formats f ON a.format_id = f.id
+				LEFT JOIN inventory i ON a.id = i.album_id
+				WHERE a.format_id = :formatId
 				ORDER BY a.year_release
 				""";
 
@@ -266,17 +276,17 @@ public class AlbumRepository {
 				SELECT
 				    a.id,
 				    a.album_name,
-				    ar.artist_name,
-				    g.genres_name,
-				    f.format_type,
+				    COALESCE(ar.artist_name, 'Desconocido'),
+				    COALESCE(g.genres_name, 'Desconocido'),
+				    COALESCE(f.format_type, 'Desconocido'),
 				    a.year_release,
 				    a.image_url,
-				    i.cost
+				    COALESCE(i.cost, 0)
 				FROM albums a
-				JOIN artists ar ON a.artist_id = ar.id
-				JOIN genres g ON a.genre_id = g.id
-				JOIN formats f ON a.format_id = f.id
-				JOIN inventory i ON a.id = i.album_id
+				LEFT JOIN artists ar ON a.artist_id = ar.id
+				LEFT JOIN genres g ON a.genre_id = g.id
+				LEFT JOIN formats f ON a.format_id = f.id
+				LEFT JOIN inventory i ON a.id = i.album_id
 				WHERE a.year_release = :year
 				ORDER BY a.year_release
 				""";
@@ -295,26 +305,26 @@ public class AlbumRepository {
 	public List<AlbumResponseDto> globalSearch(String searchText) {
 		String sql = """
 				SELECT
-				        a.id,
-				        a.album_name,
-				        ar.artist_name,
-				        g.genres_name,
-				        f.format_type,
-				        a.year_release,
-				        a.image_url,
-				        i.cost
-				    FROM albums a
-				    JOIN artists ar ON a.artist_id = ar.id
-				    JOIN genres g ON a.genre_id = g.id
-				    JOIN formats f ON a.format_id = f.id
-				    JOIN inventory i ON a.id = i.album_id
-				    WHERE
-				        LOWER(a.album_name) LIKE LOWER(?)
-				    OR LOWER(ar.artist_name) LIKE LOWER(?)
-				    OR LOWER(g.genres_name) LIKE LOWER(?)
-				    OR LOWER(f.format_type) LIKE LOWER(?)
+				    a.id,
+				    a.album_name,
+				    COALESCE(ar.artist_name, 'Desconocido'),
+				    COALESCE(g.genres_name, 'Desconocido'),
+				    COALESCE(f.format_type, 'Desconocido'),
+				    a.year_release,
+				    a.image_url,
+				    COALESCE(i.cost, 0)
+				FROM albums a
+				LEFT JOIN artists ar ON a.artist_id = ar.id
+				LEFT JOIN genres g ON a.genre_id = g.id
+				LEFT JOIN formats f ON a.format_id = f.id
+				LEFT JOIN inventory i ON a.id = i.album_id
+				WHERE
+				    LOWER(a.album_name) LIKE LOWER(?)
+				    OR LOWER(COALESCE(ar.artist_name, '')) LIKE LOWER(?)
+				    OR LOWER(COALESCE(g.genres_name, '')) LIKE LOWER(?)
+				    OR LOWER(COALESCE(f.format_type, '')) LIKE LOWER(?)
 				    OR CAST(a.year_release AS CHAR) LIKE ?
-				    LIMIT 20
+				LIMIT 20
 				""";
 
 		String pattern = "%" + searchText + "%";
@@ -322,11 +332,12 @@ public class AlbumRepository {
 		List<Object[]> results = entityManager.createNativeQuery(sql).setParameter(1, pattern).setParameter(2, pattern)
 				.setParameter(3, pattern).setParameter(4, pattern).setParameter(5, pattern).getResultList();
 
-		return results.stream()
-				.map(row -> new AlbumResponseDto(((Number) row[0]).intValue(), (String) row[1], (String) row[2],
-						(String) row[3], (String) row[4], ((Number) row[5]).intValue(), (String) row[6],
-						((Number) row[7]).floatValue()))
-				.toList();
+		return results.stream().map(row -> new AlbumResponseDto(
+
+				((Number) row[0]).intValue(), (String) row[1], (String) row[2], (String) row[3], (String) row[4],
+				((Number) row[5]).intValue(), (String) row[6], ((Number) row[7]).floatValue()
+
+		)).toList();
 	}
 
 	@SuppressWarnings("unchecked")

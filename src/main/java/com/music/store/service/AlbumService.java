@@ -40,7 +40,7 @@ public class AlbumService {
 
 			if (image != null && !image.isEmpty()) {
 
-				String path = "src/main/resources/static/images/";
+				String path = "uploads/images/";
 
 				Path imagePath = Paths.get(path + imageName);
 

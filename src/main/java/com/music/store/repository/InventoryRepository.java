@@ -87,17 +87,22 @@ public class InventoryRepository {
 		String sql = """
 				    SELECT
 				        a.album_name,
-				        ar.artist_name,
+				        COALESCE(ar.artist_name, 'Desconocido'),
 				        i.amount,
 				        i.cost
-				    FROM albums a
-				    JOIN artists ar ON a.artist_id = ar.id
-				    JOIN genres g ON a.genre_id = g.id
-				    JOIN formats f ON a.format_id = f.id
-				    JOIN inventory i ON a.id = i.album_id
-				    WHERE g.genres_name = ?
-				      AND f.format_type = ?
-				      AND i.amount > 0
+				    FROM inventory i
+				    LEFT JOIN albums a
+				        ON i.album_id = a.id
+				    LEFT JOIN artists ar
+				        ON a.artist_id = ar.id
+				    LEFT JOIN genres g
+				        ON a.genre_id = g.id
+				    LEFT JOIN formats f
+				        ON a.format_id = f.id
+				    WHERE
+				        COALESCE(g.genres_name, '') = ?
+				        AND COALESCE(f.format_type, '') = ?
+				        AND i.amount > 0
 				""";
 
 		return entityManager.createNativeQuery(sql).setParameter(1, genre).setParameter(2, format).getResultList();
@@ -107,13 +112,15 @@ public class InventoryRepository {
 	public List<Object[]> getInventoryValueByFormat() {
 		String sql = """
 				    SELECT
-				        f.format_type,
+				        COALESCE(f.format_type, 'Desconocido'),
 				        SUM(i.amount),
 				        ROUND(SUM(i.amount * i.cost), 2)
 				    FROM inventory i
-				    JOIN albums a ON i.album_id = a.id
-				    JOIN formats f ON a.format_id = f.id
-				    GROUP BY f.format_type
+				    LEFT JOIN albums a
+				        ON i.album_id = a.id
+				    LEFT JOIN formats f
+				        ON a.format_id = f.id
+				    GROUP BY COALESCE(f.format_type, 'Desconocido')
 				    ORDER BY 3 DESC
 				""";
 
@@ -124,13 +131,15 @@ public class InventoryRepository {
 	public List<Object[]> getTopArtist() {
 		String sql = """
 				    SELECT
-				        ar.artist_name,
+				        COALESCE(ar.artist_name, 'Desconocido'),
 				        COUNT(a.id),
 				        ROUND(SUM(i.amount), 2)
-				    FROM artists ar
-				    JOIN albums a ON ar.id = a.artist_id
-				    JOIN inventory i ON a.id = i.album_id
-				    GROUP BY ar.artist_name
+				    FROM inventory i
+				    LEFT JOIN albums a
+				        ON i.album_id = a.id
+				    LEFT JOIN artists ar
+				        ON a.artist_id = ar.id
+				    GROUP BY COALESCE(ar.artist_name, 'Desconocido')
 				    HAVING COUNT(a.id) > 1
 				    ORDER BY 2 DESC
 				""";
